@@ -2,11 +2,29 @@
 
 namespace LibLDAP\DN;
 
-class NameComponent
+use LibLDAP\LDAPString;
+
+class NameComponent extends LDAPString
 {
     private $type;
 
     private $value;
+
+    public function __construct($type = null, $value = null)
+    {
+        if ($type !== null) {
+            $this->type = (string) $type;
+        }
+
+        if ($value !== null) {
+            $this->value = (string) $value;
+        }
+    }
+
+    public function __toString()
+    {
+        return $this->type . '=' . $this->value;
+    }
 
     public function setType($type)
     {

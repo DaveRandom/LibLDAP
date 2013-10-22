@@ -2,16 +2,23 @@
 
 namespace LibLDAP;
 
-class Message
+use LibASN1\Sequence,
+    LibASN1\Integer;
+
+class Message extends Sequence
 {
-    private $messageID;
+    protected $components = [
+        'id' => null,
+        'operation' => null,
+        'controls' => null,
+    ];
 
-    private $operation;
-
-    private $controls;
-
-    public function setMessageID($id)
+    public function setID($id)
     {
+        if (!isset($this->components['id'])) {
+            $this->components['id'] = new Integer;
+        }
+
         $id = (int) $id;
 
         if ($id < 0) {
@@ -20,31 +27,35 @@ class Message
             throw new \OverflowException("Message ID must be less than 2^^31");
         }
 
-        $this->messageID = $id;
+        $this->components['id']->setValue($id);
     }
 
-    public function getMessageID()
+    public function getID()
     {
-        return $this->messageID;
+        if (!isset($this->components['id'])) {
+            $this->components['id'] = new Integer;
+        }
+
+        return $this->components['id']->getValue();
     }
 
     public function setOperation(Operation $operation)
     {
-        $this->operation = $operation;
+        $this->components['operation'] = $operation;
     }
 
     public function getOperation()
     {
-        return $this->operation;
+        return $this->components['operation'];
     }
 
-    public function setControls($controls)
+    public function setControls(Controls $controls)
     {
-        $this->controls = $controls;
+        $this->components['controls'] = $controls;
     }
 
     public function getControls()
     {
-        return $this->controls;
+        return $this->components['controls'];
     }
 }
